@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: cp_scraper
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - "3309:3306"
