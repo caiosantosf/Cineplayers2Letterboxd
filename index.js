@@ -20,6 +20,3 @@ app.use(require('./api/routes/index'))
 app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`)
 })
-
-const scraping = require('./services/scraping')
-scraping.getUser(12688)

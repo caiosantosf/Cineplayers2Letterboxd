@@ -44,19 +44,19 @@ exports.getWatchlist = (cpUserId) => {
         //.done() send email
 }
 
-exports.getUser = async (cpUserId) => {
+exports.getUser = (cpUserId, cb) => {
     const url = `${urls.base}${urls.user}${cpUserId}`
     let user = {}
     
-    await osmosis
+    osmosis
         .get(url)
         .set({
             'name': '#friend_ticker > h2',
             'picture': '#secao-filme-webdoor > div > div > div > div.col-sm-auto.align-self-start > a > div > img @src'
         })
-        .data(listing => user = listing)
-        
-    return user
+        .data(user => {
+            cb(user)
+        })
 }
 
 

@@ -6,7 +6,7 @@ module.exports = (router) => {
         res.send({'msg':'Users!'})
     });
     
-    router.get("/userst", usersController.create)
+    router.post("/users", usersController.create)
     //router.post("/users/:id/watchlist", usersController.createWatchlist)
 
     return router
