@@ -2,9 +2,11 @@
   "name": "cineplayers-scraper",
   "version": "1.0.0",
   "description": "A scraper for cineplayers.com users",
-  "main": "app/index.js",
+  "main": "index.js",
+  "repository": "https://github.com/caiosantosf/cineplayers-scraper",
   "scripts": {
-    "dev": "nodemon ./app/index.js",
+    "dev": "nodemon index.js",
+    "scss": "node-sass --watch public/styles -o public/styles",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,10 +18,12 @@
   "author": "Caio Santos",
   "license": "ISC",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.12.0",
     "bulma": "^0.8.0",
     "dotenv": "^8.2.0",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
+    "node-sass": "^4.13.1",
     "osmosis": "^1.1.10"
   },
   "devDependencies": {
