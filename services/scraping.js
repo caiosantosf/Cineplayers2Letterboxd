@@ -1,7 +1,8 @@
 const osmosis = require('osmosis');
+const urls = require('./../config/urls.js')
 
-exports.importWatchList = (baseUrl, cpUser) => {
-    const url = `${baseUrl}/user/${cpUser}/pra-depois?page=0`
+exports.getWatchlist = (cpUserId) => {
+    const url = `${urls.base}${urls.user}${cpUserId}${urls.watchList}page=0`
 
     osmosis
         .get(url)
@@ -29,12 +30,12 @@ exports.importWatchList = (baseUrl, cpUser) => {
             'usersAverage': '#secao-filme-webdoor > div > div > div > div.movie-rates-column.col-lg > div > div > div > div:nth-child(1) > div.rate-bubble.mb-1 > div'
         })
         .data(listing => {
-            const id = listing.id.replace('/filmes/','')
+            const cpMovieId = listing.id.replace('/filmes/','')
             const year = listing.year.substr(listing.year.length - 5, 4)
             const countries = listing.countries.trim().split(', ')
             const minutes = listing.minutes.match( /\d+/g )[0]
 
-            movie = {...listing, id, year, countries, minutes}
+            movie = {...listing, cpMovieId, year, countries, minutes}
 
             console.log(movie)
             //save on db
@@ -42,3 +43,24 @@ exports.importWatchList = (baseUrl, cpUser) => {
         .error(console.log)
         //.done() send email
 }
+
+exports.getUser = async (cpUserId) => {
+    const url = `${urls.base}${urls.user}${cpUserId}`
+    let user = {}
+    
+    await osmosis
+        .get(url)
+        .set({
+            'name': '#friend_ticker > h2',
+            'picture': '#secao-filme-webdoor > div > div > div > div.col-sm-auto.align-self-start > a > div > img @src'
+        })
+        .data(listing => user = listing)
+        
+    return user
+}
+
+
+
+
+
+

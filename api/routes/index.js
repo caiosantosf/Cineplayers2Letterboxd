@@ -1,7 +1,12 @@
-var router = require('express').Router();
+var router = require('express').Router()
+var users = require('./users')
+var movies = require('./movies')
 
 router.get("/", (req, res) => {
-    res.render('index')
+    res.send({'msg':'API do CP Scraper'})
 });
 
-module.exports = router;
+router = users(router)
+router = movies(router)
+
+module.exports = router
