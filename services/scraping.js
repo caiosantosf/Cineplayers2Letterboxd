@@ -1,7 +1,7 @@
 const osmosis = require('osmosis');
 const urls = require('./../config/urls.js')
 
-exports.getWatchlist = (cpUserId) => {
+exports.getWatchlist = (cpUserId, sucess, error) => {
     const url = `${urls.base}${urls.user}${cpUserId}${urls.watchList}page=0`
 
     osmosis
@@ -37,14 +37,12 @@ exports.getWatchlist = (cpUserId) => {
 
             movie = {...listing, cpMovieId, year, countries, minutes}
 
-            console.log(movie)
-            //save on db
+            sucess(movie)
         })
-        .error(console.log)
-        //.done() send email
+        .error(error)
 }
 
-exports.getUser = (cpUserId, cb) => {
+exports.getUser = (cpUserId, sucess, error) => {
     const url = `${urls.base}${urls.user}${cpUserId}`
     let user = {}
     
@@ -55,8 +53,9 @@ exports.getUser = (cpUserId, cb) => {
             'picture': '#secao-filme-webdoor > div > div > div > div.col-sm-auto.align-self-start > a > div > img @src'
         })
         .data(user => {
-            cb(user)
+            sucess(user)
         })
+        .error(error)
 }
 
 

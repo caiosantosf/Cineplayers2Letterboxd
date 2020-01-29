@@ -4,7 +4,7 @@ module.exports = (sequelize, Sequelize) => {
     cpUserId: {type: Sequelize.INTEGER},
     email: {type: Sequelize.STRING},
     picture: {type: Sequelize.STRING}
-  });
+  })
 
-  return User;
-};
+  return User
+}
