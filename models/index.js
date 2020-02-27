@@ -1,4 +1,7 @@
 const Sequelize = require("sequelize");
+var fs = require('fs');
+var path = require('path');
+var basename = path.basename(__filename);
 
 const sequelize = new Sequelize(process.env.DB_NAME, 
   process.env.DB_USERNAME, 
@@ -18,7 +21,20 @@ db.sequelize = sequelize;
 if (process.env.ENVIRONMENT == 'development')
   db.sequelize.sync({ force: true })
 
-db.movies = require("./movies.js")(sequelize, Sequelize);
-db.users = require("./users.js")(sequelize, Sequelize);
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(file => {
+    var model = sequelize['import'](path.join(__dirname, file));
+    db[model.name] = model;
+  });
+
+  Object.keys(db).forEach(modelName => {
+    if (db[modelName].associate) {
+      db[modelName].associate(db);
+    }
+})
 
 module.exports = db;

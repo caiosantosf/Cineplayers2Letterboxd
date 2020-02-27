@@ -8,10 +8,11 @@ module.exports = (router, validator, error) => {
     
     router.post("/users", [
         check('email').isEmail().normalizeEmail(),
-        check('cpUserId').isNumeric()
+        check('cpUsername').isLength({ min: 1 })
       ], 
       (req, res) => {
         const reqErrors = validationResult(req);
+        
         if (!reqErrors.isEmpty()) {
           return res.status(422).json({ errors: reqErrors.array() });
         }

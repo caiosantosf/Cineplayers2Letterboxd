@@ -7,5 +7,21 @@ module.exports = (sequelize, Sequelize) => {
     usersAverage: {type: Sequelize.INTEGER}
   })
 
+  Movie.associate = models => {
+    models.movies.belongsToMany(models.countries, {
+      through: 'movieCountries',
+      as: 'countries',
+      foreignKey: 'movieId',
+      otherKey: 'countryId'
+    })
+
+    models.movies.belongsToMany(models.people, {
+      through: 'moviePeople',
+      as: 'people',
+      foreignKey: 'movieId',
+      otherKey: 'personId'
+    })
+  }
+
   return Movie
 }

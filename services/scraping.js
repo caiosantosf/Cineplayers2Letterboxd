@@ -42,10 +42,10 @@ exports.getWatchlist = (cpUserId, sucess, error) => {
         .error(error)
 }
 
-exports.getUser = (cpUserId, sucess, error) => {
-    const url = `${urls.base}${urls.user}${cpUserId}`
+exports.getUser = (cpUsername, sucess, error) => {
+    const url = `${urls.base}${cpUsername}`
     let user = {}
-    
+
     osmosis
         .get(url)
         .set({
@@ -57,9 +57,5 @@ exports.getUser = (cpUserId, sucess, error) => {
         })
         .error(error)
 }
-
-
-
-
 
 

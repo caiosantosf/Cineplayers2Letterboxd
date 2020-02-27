@@ -1,13 +1,17 @@
 const db = require("./../../models")
 const User = db.users
-const Op = db.Sequelize.Op
 const scraping = require('./../../services/scraping')
 
 exports.create = (req, res, error) => {
-  const { cpUserId, email } = req.body
+  const { cpUsername, email } = req.body
 
-  scraping.getUser(cpUserId, user => {
-    User.create({...user, cpUserId, email})
+  scraping.getUser(cpUsername, user => {
+    const cpUserId = user.picture.split('/')[10]
+
+    if (!+cpUserId)
+      error()
+      
+    User.create({...user, cpUserId, cpUsername, email})
       .then(data => res.status(201).send(data))
       .catch(err => error(err.message))
   }, error)
