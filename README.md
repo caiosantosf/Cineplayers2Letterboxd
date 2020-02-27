@@ -9,6 +9,8 @@ Os dados são acessados através de scraping (leitura do HTML público).
 ## Como executar localmente
 
 Você precisa ter o node na versão 12 e o docker atualizado instalados!
+Crie o arquivo .env a partir do .env.example alterando as variáveis caso necessário.
+Execute os comandos:
 
 ```
 npm install
