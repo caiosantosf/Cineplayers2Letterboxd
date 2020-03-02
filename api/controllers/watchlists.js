@@ -6,7 +6,7 @@ const scraping = require('../../services/scraping')
 
 exports.create = (req, res, error) => {
     const id = req.params.id
-    const { cpUserId } = await User.findByPk(id)
+    //const { cpUserId } = await User.findByPk(id)
   
     scraping.getWatchlist(cpUserId, movie => {
       Movie.findByPk(movie.id)

@@ -1,11 +1,14 @@
 version: '3.3'
 services:
-  db:
-    image: mysql:5.7
+  pg:
+    image: postgres:9.6
+    container_name: "postgres"
     environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: cp_scraper
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
+      - POSTGRES_DB=cp_scraper
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=GMT
+    volumes:
+      - "./data/postgres:/var/lib/postgresql/data"
     ports:
-      - "3309:3306"
+      - 5432:5432

@@ -6,12 +6,7 @@ exports.create = (req, res, error) => {
   const { cpUsername, email } = req.body
 
   scraping.getUser(cpUsername, user => {
-    const cpUserId = user.picture.split('/')[10]
-
-    if (!+cpUserId)
-      error()
-      
-    User.create({...user, cpUserId, cpUsername, email})
+    User.create({...user, email})
       .then(data => res.status(201).send(data))
       .catch(err => error(err.message))
   }, error)

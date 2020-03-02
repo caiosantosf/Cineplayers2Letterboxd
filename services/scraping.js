@@ -1,6 +1,39 @@
 const osmosis = require('osmosis');
 const urls = require('./../config/urls.js')
 
+exports.getRatings = (cpUserId, sucess, error) => {
+    let urlBase = `${urls.base}${urls.user}${cpUserId}${urls.ratings}page=`
+    let url = ''
+
+    osmosis
+        .get(urlBase)
+        .find('#main > div.container.py-5 > div > article > div > div > div > div > section > nav > ul > li:nth-child(12) > a')
+        .set({'pages': '@href'})
+        .data(listing => {
+            const pages = 9//listing.pages.split('&')[3].replace('page=','')
+            for (let j = 0; j <= pages; j++) {
+                url = urlBase + j
+                for (let i = 1; i <= 100; i++) {
+                    osmosis
+                        .get(url)
+                        .set({'score': '#score-table > tbody > tr:nth-child(' + i + ') > td:nth-child(3) > div > div'})
+                        .find('#score-table > tbody > tr:nth-child(' + i + ') > td:nth-child(1) > div > div > a')
+                        .follow('@href')
+                        .find('#secao-filme-webdoor > div > div > div > div.col-lg-8.text-md-left.mb-3.mb-lg-0 > div.movie-user-actions > ul > li.nav-item.dropdown > div > a:nth-child(1)')
+                        .set({'cpMovieId': '@href'})
+                        .data(listing => {
+                            const cpMovieId = listing.cpMovieId.split('/')[5].replace('criar?movie=','')
+                            const score = listing.score 
+                            const rating = ({cpUserId, cpMovieId, score})
+
+                            sucess(rating)
+                        })
+                        .error(error)
+                }
+            }
+        })
+}
+
 exports.getWatchlist = (cpUserId, sucess, error) => {
     const url = `${urls.base}${urls.user}${cpUserId}${urls.watchList}page=0`
 
@@ -35,7 +68,7 @@ exports.getWatchlist = (cpUserId, sucess, error) => {
             const countries = listing.countries.trim().split(', ')
             const minutes = listing.minutes.match( /\d+/g )[0]
 
-            movie = {...listing, cpMovieId, year, countries, minutes}
+            const movie = {...listing, cpMovieId, year, countries, minutes}
 
             sucess(movie)
         })
@@ -44,7 +77,6 @@ exports.getWatchlist = (cpUserId, sucess, error) => {
 
 exports.getUser = (cpUsername, sucess, error) => {
     const url = `${urls.base}${cpUsername}`
-    let user = {}
 
     osmosis
         .get(url)
@@ -52,7 +84,14 @@ exports.getUser = (cpUsername, sucess, error) => {
             'name': '#friend_ticker > h2',
             'picture': '#secao-filme-webdoor > div > div > div > div.col-sm-auto.align-self-start > a > div > img @src'
         })
-        .data(user => {
+        .data(listing => {
+            const cpUserId = listing.picture.split('/')[10]
+
+            if (!+cpUserId)
+              error()
+      
+            const user = {...listing, cpUsername, cpUserId}
+
             sucess(user)
         })
         .error(error)
