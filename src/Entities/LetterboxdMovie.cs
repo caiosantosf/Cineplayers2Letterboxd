@@ -3,9 +3,9 @@ using System.Globalization;
 using System.Net;
 using System.Text;
 
-namespace cineplayers_scraper;
+namespace cineplayers_scraper.src.Entities;
 
-public class Movie
+public class LetterboxdMovie
 {
     public string Title { get; set; }
 
@@ -19,7 +19,7 @@ public class Movie
 
     public string WatchedDate { get; private set; }
 
-    public Movie(string title, string year, string directors, string rating10, string review, string watchedDate)
+    public LetterboxdMovie(string title, string year, string directors, string rating10, string review, string watchedDate)
     {
         Title = WebUtility.HtmlDecode(title);
         Year = year;
