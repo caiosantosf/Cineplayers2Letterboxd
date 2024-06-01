@@ -1,4 +1,4 @@
-# Exporte seus filmes, notas e lupas (mini reviews) do Cineplayers para o Letterboxd!
+## Exporte seus filmes, notas e lupas (mini reviews) do Cineplayers para o Letterboxd!
 
 ## Como executar localmente
 
