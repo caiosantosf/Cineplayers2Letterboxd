@@ -1,6 +1,6 @@
-## Exporte seus filmes, notas e reviews do Cineplayers para o Letterboxd!
+### Exporte seus filmes, notas, reviews e watchlist do Cineplayers para o Letterboxd!
 
-## Como executar localmente
+### Como executar localmente
 
 
 

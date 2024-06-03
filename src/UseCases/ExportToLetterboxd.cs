@@ -1,9 +1,11 @@
-﻿using cineplayers_scraper.src.Entities;
-using cineplayers_scraper.src.Extensions;
+﻿using cineplayers2letterboxd.src.Entities;
+using cineplayers2letterboxd.src.Extensions;
 using HtmlAgilityPack;
+using System.Globalization;
+using System.Net;
 using System.Text;
 
-namespace cineplayers_scraper.src.UseCases;
+namespace cineplayers2letterboxd.src.UseCases;
 
 public class ExportToLetterboxd
 {
@@ -49,8 +51,9 @@ public class ExportToLetterboxd
                 break;
 
             var ratings = doc.DocumentNode
-                .SelectNodes("//div[@class=\"rate-number\"]")
-                .Select(node => node.InnerText.Replace(",", ".")).ToList();
+            .SelectNodes("//div[@class=\"rate-number\"]")
+                .Select(node => Math.Truncate(float.Parse(node.InnerText.Replace(",", "."), CultureInfo.InvariantCulture))
+                    .ToString(CultureInfo.InvariantCulture)).ToList();
 
             tasks.AddRange(moviesUrls.Select((_, index) =>
             {
@@ -63,23 +66,23 @@ public class ExportToLetterboxd
 
         if (Movies == null || Movies.Count == 0)
         {
-            Console.WriteLine("Algo ocorreu errado, não encontramos seus filmes, verifique seu nome de usuário e seu perfil no Cineplayers.");
-            Console.WriteLine("Digite qualquer tecla para encerrar");
-            Console.ReadKey(true);
-            Environment.Exit(1);
+            Exit(1, "Algo ocorreu errado, não encontramos seus filmes, verifique seu nome de usuário e seu perfil no Cineplayers.");
         }
 
-        string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "movies.csv");
+        var count = 0;
+        for (int i = 0; i < Movies.Count; i += 1900)
+        {
+            var sublist = Movies.GetRange(i, Math.Min(i + 1900, Movies.Count) - i);
 
-        if (File.Exists(filePath))
-            File.WriteAllText(filePath, string.Empty);
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"movies{count++}.csv");
 
-        File.WriteAllText(filePath, Movies.ToCsv());
+            if (File.Exists(path))
+                File.WriteAllText(path, string.Empty);
 
-        Console.WriteLine("CSV gerado com sucesso na mesma pasta deste executável!");
-        Console.WriteLine("Digite qualquer tecla para encerrar");
-        Console.ReadKey(true);
-        Environment.Exit(0);
+            File.WriteAllText(path, sublist.ToCsv());
+        }
+
+        Exit(0, "CSV gerado com sucesso na mesma pasta deste executável!");
     }
 
     private void GetMovie(string url, string rating)
@@ -93,16 +96,16 @@ public class ExportToLetterboxd
 
             var titleYearDelimiter = titleWithYear.LastIndexOf(',');
 
-            var title = titleWithYear[..titleYearDelimiter].Replace("(", "");
+            var title = WebUtility.HtmlDecode(titleWithYear[..titleYearDelimiter].Replace("(", ""));
 
             if (title.Split(",").Length > 1)
                 title = $"{title.Split(",")[1].Trim()} {title.Split(",")[0].Trim()}";
 
             var year = titleWithYear[(titleYearDelimiter + 2)..].Replace(")", "");
 
-            var directors = doc.DocumentNode
+            var directors = WebUtility.HtmlDecode(doc.DocumentNode
                 .SelectSingleNode("//*[@id=\"main\"]/div[2]/div/article/div[1]/div[1]/div/div/div/section/div[2]/dl/dd[1]/a")
-                .InnerText;
+                .InnerText);
 
             var movieReviewsUrl = doc.DocumentNode
                 .SelectSingleNode("//link[@rel=\"shortlink\"]/@href").Attributes["href"].Value.Replace("node", "lupas");
@@ -125,16 +128,16 @@ public class ExportToLetterboxd
 
                 previousReviewBoard = reviewBoard;
 
-                review = doc.DocumentNode
+                review = $"\"{WebUtility.HtmlDecode(doc.DocumentNode
                     .SelectSingleNode($"//a[@href='/{Username}' and @class='text-highlight text-color-users-dark']/../preceding-sibling::div[1]/p[1]")?
-                    .InnerText.Trim();
+                    .InnerText.Trim() ?? "")} \"";
 
                 if (review == null)
                     continue;
 
                 watchedDate = doc.DocumentNode
                     .SelectSingleNode($"//a[@href='/{Username}' and @class='text-highlight text-color-users-dark']/..")?
-                    .ChildNodes.Single(x => x.InnerText.Contains("Em")).InnerText.Trim();
+                    .ChildNodes.Single(x => x.InnerText.Contains("Em")).InnerText.Trim().ConvertCineplayersDateToLetterboxdDate();
 
                 break;
             }
@@ -149,5 +152,13 @@ public class ExportToLetterboxd
         {
             Console.WriteLine($"!!!!!!!! ERRO: {url} {e}");
         }
+    }
+
+    private static void Exit(byte withError, string msg)
+    {
+        Console.WriteLine(msg);
+        Console.WriteLine("Digite qualquer tecla para encerrar");
+        Console.ReadKey(true);
+        Environment.Exit(withError);
     }
 }

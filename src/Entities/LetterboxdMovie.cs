@@ -1,9 +1,6 @@
-﻿using System;
-using System.Globalization;
-using System.Net;
-using System.Text;
+﻿using System.Globalization;
 
-namespace cineplayers_scraper.src.Entities;
+namespace cineplayers2letterboxd.src.Entities;
 
 public class LetterboxdMovie
 {
@@ -21,22 +18,12 @@ public class LetterboxdMovie
 
     public LetterboxdMovie(string title, string year, string directors, string rating10, string review, string watchedDate)
     {
-        Title = WebUtility.HtmlDecode(title);
+        Title = title;
         Year = year;
-        Directors = WebUtility.HtmlDecode(directors);
-        Rating10 = Math.Truncate(float.Parse(rating10, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
-        Review = WebUtility.HtmlDecode(review).Replace(",", "");
-        WatchedDate = ConvertDate(watchedDate);
-    }
-
-    private static string ConvertDate(string dateReceived)
-    {
-        string format = "d 'de' MMMM 'de' yyyy";
-
-        if (DateTime.TryParseExact(dateReceived, format, new CultureInfo("pt-BR"), DateTimeStyles.None, out DateTime date))
-            return date.ToString("yyyy-MM-dd");
-
-        return "";
+        Directors = directors;
+        Rating10 = rating10;
+        Review = review;
+        WatchedDate = watchedDate;
     }
 
     public override string ToString() => $"... {Title} ({Directors}, {Year})";

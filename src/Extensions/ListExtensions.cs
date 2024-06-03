@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Text;
 
-namespace cineplayers_scraper.src.Extensions;
+namespace cineplayers2letterboxd.src.Extensions;
 
 public static class ListExtensions
 {
