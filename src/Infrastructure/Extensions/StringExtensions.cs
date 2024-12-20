@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
+using System.Net;
 
-namespace cineplayers2letterboxd.src.Extensions;
+namespace Cineplayers2Letterboxd.Infrastructure.Extensions;
 
 public static class StringExtensions
 {
@@ -8,10 +9,12 @@ public static class StringExtensions
     {
         string format = "d 'de' MMMM 'de' yyyy";
 
-        if (DateTime.TryParseExact(dateReceived.Replace("Em ", ""), format, 
+        if (DateTime.TryParseExact(dateReceived.Replace("Em ", ""), format,
             new CultureInfo("pt-BR"), DateTimeStyles.None, out DateTime date))
             return date.ToString("yyyy-MM-dd");
 
         return "";
     }
+
+    public static string Decode(this string value) => WebUtility.HtmlDecode(value);
 }
